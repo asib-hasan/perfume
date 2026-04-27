@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+/* ===== DESIGN TOKENS (Tailwind v4 @theme) ===== */
+@theme inline {
+  /* Colors — SEEZ brand: warm gold accents + deep black + warm neutrals */
+  --color-seez-amber: #d4a017;
+  --color-seez-amber-dark: #b08512;
+  --color-seez-amber-light: #e8b930;
+  --color-seez-gold: #c9952a;
+  --color-seez-black: #080808;
+  --color-seez-charcoal: #111111;
+  --color-seez-dark: #161412;
+  --color-seez-gray: #1e1c1a;
+  --color-seez-gray-warm: #c4bab0;
+  --color-seez-gray-mid: #7a7570;
+  --color-seez-white: #f0ebe3;
+  --color-seez-cream: #e8e0d4;
+
+  /* Fonts */
+  --font-display: "Playfair Display", serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-ui: "Plus Jakarta Sans", sans-serif;
+
+  /* Screens */
+  --breakpoint-xs: 475px;
+
+  /* Animations */
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 3s ease-in-out infinite;
+  --animate-glow-breathe: glow-breathe 4s ease-in-out infinite;
+}
+
+/* ===== KEYFRAMES ===== */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes glow-breathe {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(212,160,23,0.2)); }
+  50% { filter: drop-shadow(0 0 20px rgba(212,160,23,0.5)); }
+}
+
+@keyframes gradient-text-flow {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
+}
+
+@keyframes letter-reveal {
+  0% { opacity: 0; transform: translateY(40px) rotateX(-30deg); filter: blur(6px); }
+  100% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+}
+
+@keyframes bottle-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  33% { transform: translateY(-15px) rotate(1deg); }
+  66% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes line-draw {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+@keyframes particle-drift {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 0.6; }
+  100% { transform: translate(var(--drift-x, 30px), var(--drift-y, -80px)) scale(0.3); opacity: 0; }
+}
+
+/* ===== BASE STYLES ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-seez-black);
+  color: var(--color-seez-gray-warm);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== CUSTOM UTILITIES ===== */
+
+/* SEEZ brand gradient text — amber/gold/white shimmer */
+.seez-gradient-text {
+  background: linear-gradient(
+    135deg,
+    #f0ebe3 0%,
+    #e8b930 30%,
+    #d4a017 50%,
+    #e8b930 70%,
+    #f0ebe3 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-text-flow 6s ease infinite;
+}
+
+/* Hero background gradient */
+.bg-gradient-seez {
+  background: linear-gradient(165deg, #080808 0%, #0f0d09 35%, #12100a 60%, #080808 100%);
+}
+
+/* Amber glow border */
+.amber-glow {
+  box-shadow: 0 0 20px rgba(212, 160, 23, 0.1), 0 0 60px rgba(212, 160, 23, 0.04);
+}
+
+/* Animation delays */
+.delay-500 { animation-delay: 500ms; }
+.delay-1000 { animation-delay: 1000ms; }
+.delay-1500 { animation-delay: 1500ms; }
+.delay-2000 { animation-delay: 2000ms; }
+.delay-3000 { animation-delay: 3000ms; }
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-seez-black); }
+::-webkit-scrollbar-thumb { background: var(--color-seez-amber); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-seez-amber-light); }
+
+/* Border width 3 for avatar */
+.border-3 { border-width: 3px; }
+
+/* ===== CONFETTI / SPARKLE PARTICLES ===== */
+@keyframes sparkle-fall-1 {
+  0% { transform: translate(0, -10vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.8; }
+  100% { transform: translate(60px, 110vh) rotate(360deg); opacity: 0; }
+}
+@keyframes sparkle-fall-2 {
+  0% { transform: translate(0, -10vh) rotate(45deg); opacity: 0; }
+  10% { opacity: 0.9; }
+  90% { opacity: 0.6; }
+  100% { transform: translate(-50px, 110vh) rotate(-270deg); opacity: 0; }
+}
+@keyframes sparkle-fall-3 {
+  0% { transform: translate(0, -10vh) rotate(90deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.5; }
+  100% { transform: translate(35px, 110vh) rotate(450deg); opacity: 0; }
+}
+
+.confetti-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+}
+
+/* ===== PRODUCT BOX SCROLL ANIMATION ===== */
+.product-box-image {
+  transition: transform 0.1s linear;
+}
+
+/* ===== FLOATING BUTTONS ===== */
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.floating-btn {
+  animation: bounce-subtle 3s ease-in-out infinite;
+}
