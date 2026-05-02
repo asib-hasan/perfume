@@ -48,7 +48,7 @@ export default function Scene({ activeProduct = "bold" }: SceneProps) {
             <ambientLight intensity={0.5} />
             <directionalLight position={[10, 10, 5]} intensity={1} />
             <directionalLight position={[-10, -10, -5]} intensity={0.3} />
-            <pointLight position={[0, 5, 0]} intensity={0.5} color="#d4a017" />
+            <pointLight position={[0, 5, 0]} intensity={0.6} color="#0ea5e9" />
             <ProductModel productSlug={activeProduct} />
           </Suspense>
         </Canvas>

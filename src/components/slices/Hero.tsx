@@ -24,12 +24,12 @@ function PerfumeBottle({
   return (
     <div id={id} className={`product-box-image ${className}`} style={style}>
       <svg width={d.w} height={d.h} viewBox="0 0 90 135" fill="none">
-        <rect x="34" y="0" width="22" height="8" rx="2" fill="#d4a017" opacity="0.7" />
-        <circle cx="45" cy="4" r="3" fill="#0a0a0a" stroke="#d4a017" strokeWidth="0.8" />
-        <rect x="38" y="8" width="14" height="10" fill="#d4a017" opacity="0.6" />
-        <rect x="15" y="18" width="60" height="105" rx="6" fill="#d4a017" opacity="0.15" stroke="#d4a017" strokeWidth="1" opacity-stroke="0.3" />
-        <rect x="22" y="28" width="46" height="85" rx="3" fill="#d4a017" opacity="0.08" />
-        <text x="45" y="82" textAnchor="middle" fill="#d4a017" fontSize="36" fontWeight="bold" fontFamily="serif" opacity="0.4">E</text>
+        <rect x="34" y="0" width="22" height="8" rx="2" fill="#0ea5e9" opacity="0.7" />
+        <circle cx="45" cy="4" r="3" fill="#0a0a0a" stroke="#0ea5e9" strokeWidth="0.8" />
+        <rect x="38" y="8" width="14" height="10" fill="#0ea5e9" opacity="0.6" />
+        <rect x="15" y="18" width="60" height="105" rx="6" fill="#0ea5e9" opacity="0.15" stroke="#0ea5e9" strokeWidth="1" opacity-stroke="0.3" />
+        <rect x="22" y="28" width="46" height="85" rx="3" fill="#0ea5e9" opacity="0.08" />
+        <text x="45" y="82" textAnchor="middle" fill="#0ea5e9" fontSize="36" fontWeight="bold" fontFamily="serif" opacity="0.4">E</text>
       </svg>
     </div>
   );
@@ -39,7 +39,7 @@ function PerfumeBottle({
 function GlowOrb({ id, className = "", style = {} }: { id?: string; className?: string; style?: React.CSSProperties }) {
   return (
     <div id={id} className={`absolute rounded-full ${className}`} style={{
-      background: "radial-gradient(circle at 40% 40%, rgba(212,160,23,0.15) 0%, rgba(212,160,23,0.05) 50%, transparent 70%)",
+      background: "radial-gradient(circle at 40% 40%, rgba(14,165,233,0.15) 0%, rgba(14,165,233,0.05) 50%, transparent 70%)",
       ...style,
     }} />
   );
@@ -58,20 +58,34 @@ export default function Hero() {
       });
     }
 
-    // ── Logo entrance ──
+    // ── Logo entrance & continuous smart animation ──
     const logo = document.querySelector(".hero-logo") as HTMLElement;
     if (logo) {
-      logo.style.opacity = "0";
-      logo.style.transform = "scale(0.85) translateY(20px)";
-      logo.style.filter = "blur(10px)";
-      logo.style.transition = "all 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s";
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          logo.style.opacity = "1";
-          logo.style.transform = "scale(1) translateY(0)";
-          logo.style.filter = "blur(0)";
-        }, 50);
-      });
+      gsap.fromTo(
+        logo,
+        { opacity: 0, scale: 0.85, y: 20, filter: "blur(10px)" },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 1.2,
+          ease: "power3.out",
+          delay: 0.2,
+          onComplete: () => {
+            // Elegant continuous breathing/floating effect
+            gsap.to(logo, {
+              y: -15,
+              scale: 1.06,
+              filter: "drop-shadow(0 0 50px rgba(14,165,233,0.6)) brightness(1.1)",
+              duration: 2.5,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1,
+            });
+          }
+        }
+      );
     }
 
     // ── Staggered fade-ins ──
@@ -162,7 +176,7 @@ export default function Hero() {
           <GlowOrb className="hero-orb w-[30rem] h-[30rem] opacity-60" style={{ top: "5%", left: "-5%" }} />
           <GlowOrb className="hero-orb w-[40rem] h-[40rem] opacity-40" style={{ bottom: "0%", right: "-10%" }} />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] rounded-full opacity-[0.03]"
-            style={{ background: "radial-gradient(circle, #d4a017, transparent 70%)" }} />
+            style={{ background: "radial-gradient(circle, #0ea5e9, transparent 70%)" }} />
 
           {/* Fine grain texture overlay */}
           <div className="absolute inset-0 opacity-[0.015]" style={{
@@ -181,13 +195,13 @@ export default function Hero() {
           <div className="relative z-[60] flex flex-col items-center gap-6 sm:gap-8 text-center px-4 sm:px-6">
 
             {/* Logo — the hero centerpiece */}
-            <div className="hero-logo">
+            <div className="hero-logo will-change-transform">
               <Image
                 src="/images/logo-transparent.png"
                 alt="SEEZ — Little is Enough"
                 width={500}
                 height={280}
-                className="h-36 sm:h-44 md:h-52 lg:h-64 xl:h-72 w-auto drop-shadow-[0_0_60px_rgba(212,160,23,0.25)]"
+                className="h-14 sm:h-16 md:h-20 lg:h-24 xl:h-28 w-auto drop-shadow-[0_0_20px_rgba(14,165,233,0.4)]"
                 priority
               />
             </div>
@@ -198,18 +212,18 @@ export default function Hero() {
             </div>
 
             {/* Subtitle — just one line, no redundancy */}
-            <p className="hero-fade-in text-seez-white/60 text-sm sm:text-base md:text-lg max-w-md leading-relaxed tracking-wide">
+            <p className="hero-fade-in text-seez-white/80 text-base sm:text-lg md:text-xl max-w-md leading-relaxed tracking-wide font-light">
               Premium solid perfumes — portable, powerful, personal.
             </p>
 
             {/* CTA */}
-            <div className="hero-fade-in mt-1 sm:mt-3">
+            <div className="hero-fade-in mt-4 sm:mt-6">
               <a
                 href="#carousel"
-                className="group relative inline-flex items-center gap-2.5 rounded-full border border-seez-gold/30 px-8 sm:px-10 py-3 sm:py-3.5 font-medium text-seez-white bg-transparent hover:bg-seez-gold/10 hover:border-seez-gold/60 transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-seez-gold/30"
+                className="group relative inline-flex items-center gap-3 rounded-full bg-seez-white text-seez-black px-8 sm:px-10 py-3 sm:py-4 font-semibold hover:bg-seez-amber hover:text-seez-white transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-seez-gold/50 shadow-xl shadow-white/5 hover:shadow-seez-amber/20 hover:-translate-y-1"
               >
                 <span className="tracking-wider text-sm uppercase">Explore Collection</span>
-                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 text-seez-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </a>

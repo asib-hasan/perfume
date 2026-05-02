@@ -1,8 +1,14 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Sparkles, Quote, BadgeCheck, Star, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const testimonials = [
   {
@@ -68,8 +74,34 @@ export default function TestimonialSlider() {
     return () => clearInterval(timer);
   }, [activeIndex, goTo]);
 
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".ts-header",
+        { y: 50, opacity: 0, scale: 0.9 },
+        { y: 0, opacity: 1, scale: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".ts-header", start: "top 85%" } }
+      );
+      
+      gsap.fromTo(
+        ".ts-carousel",
+        { y: 80, opacity: 0, rotateX: 10 },
+        { y: 0, opacity: 1, rotateX: 0, duration: 1.2, ease: "back.out(1.2)", scrollTrigger: { trigger: ".ts-carousel", start: "top 80%" } }
+      );
+
+      gsap.fromTo(
+        ".ts-banner",
+        { y: 50, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 1, ease: "power4.out", scrollTrigger: { trigger: ".ts-banner", start: "top 90%" } }
+      );
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       data-slice-type="testimonial_slider"
       className="w-full min-h-screen bg-seez-black flex flex-col items-center justify-center py-16 sm:py-24 px-4 sm:px-8 relative overflow-hidden"
     >
@@ -82,7 +114,7 @@ export default function TestimonialSlider() {
 
       <div className="relative w-full max-w-6xl z-10">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-16">
+        <div className="ts-header text-center mb-8 sm:mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Sparkles className="w-8 h-8 text-seez-amber animate-pulse" />
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
@@ -94,52 +126,59 @@ export default function TestimonialSlider() {
         </div>
 
         {/* Card carousel */}
-        <div className="relative h-[380px] sm:h-[480px] flex items-center justify-center">
+        <div className="ts-carousel relative h-[400px] sm:h-[500px] flex items-center justify-center" style={{ perspective: "2000px", transformStyle: "preserve-3d" }}>
           {testimonials.map((testimonial, index) => {
             const isActive = index === activeIndex;
             const isPrev =
               index === (activeIndex - 1 + testimonials.length) % testimonials.length;
             const isNext = index === (activeIndex + 1) % testimonials.length;
 
-            let transform = "translateX(100%) scale(0.8)";
+            let transform = "translateX(0) scale(0.6) translateZ(-400px) rotateY(0)";
             let zIndex = 1;
             let opacity = 0;
-            let filter = "blur(1px)";
+            let filter = "blur(10px)";
+            let activeBoxShadow = "none";
+            let borderStyle = "border-white/10";
 
             if (isActive) {
-              transform = "translateX(0) scale(1)";
-              zIndex = 5;
+              transform = "translateX(0) scale(1) translateZ(80px) rotateY(0)";
+              zIndex = 10;
               opacity = 1;
               filter = "blur(0px)";
+              activeBoxShadow = "0 30px 60px -15px rgba(209, 213, 219, 0.25)";
+              borderStyle = "border-seez-amber/40";
             } else if (isPrev) {
-              transform = "translateX(-110%) scale(0.85)";
-              zIndex = 3;
+              transform = "translateX(-65%) scale(0.85) translateZ(-150px) rotateY(25deg)";
+              zIndex = 5;
               opacity = 0.5;
-              filter = "blur(1px)";
+              filter = "blur(3px)";
             } else if (isNext) {
-              transform = "translateX(110%) scale(0.85)";
-              zIndex = 3;
+              transform = "translateX(65%) scale(0.85) translateZ(-150px) rotateY(-25deg)";
+              zIndex = 5;
               opacity = 0.5;
-              filter = "blur(1px)";
+              filter = "blur(3px)";
             }
 
             return (
               <div
                 key={testimonial.name}
-                className="absolute w-80 sm:w-96 h-[340px] sm:h-[420px] cursor-pointer transition-all duration-1000 ease-out border border-seez-amber/30 shadow-2xl overflow-hidden rounded-2xl"
+                className={`absolute w-80 sm:w-[26rem] h-[340px] sm:h-[440px] cursor-pointer transition-all duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] border ${borderStyle} overflow-hidden rounded-3xl`}
                 style={{
                   transform,
                   zIndex,
                   opacity,
                   filter,
-                  background:
-                    "linear-gradient(135deg, rgba(232,160,0,0.08) 0%, rgba(194,133,0,0.15) 50%, rgba(42,42,42,0.35) 100%)",
+                  boxShadow: activeBoxShadow,
+                  background: isActive
+                    ? "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)"
+                    : "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
+                  backdropFilter: "blur(16px)"
                 }}
                 onClick={() => goTo(index)}
               >
                 <div className="p-0 h-full relative">
                   {/* Card overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#d4a017]/5 via-[#b08512]/8 to-[#080808]/90" />
+                  <div className="absolute inset-0 bg-black/40" />
 
                   {/* Quote icon */}
                   <div className="absolute top-3 sm:top-6 right-3 sm:right-6 opacity-30">
@@ -179,11 +218,11 @@ export default function TestimonialSlider() {
                     </div>
 
                     {/* Stars */}
-                    <div className="flex items-center gap-1 mb-2 sm:mb-3">
+                    <div className="flex items-center gap-1 mb-2 sm:mb-4">
                       {[0, 1, 2, 3, 4].map((i) => (
                         <Star
                           key={i}
-                          className={`w-4 sm:w-5 h-4 sm:h-5 fill-seez-amber text-seez-amber ${isActive ? "animate-pulse" : ""}`}
+                          className={`w-4 sm:w-5 h-4 sm:h-5 fill-yellow-400 text-yellow-400 ${isActive ? "animate-pulse" : ""}`}
                           style={{ animationDelay: `${i * 100}ms` }}
                         />
                       ))}
@@ -267,8 +306,8 @@ export default function TestimonialSlider() {
         </div>
 
         {/* CTA Banner */}
-        <div className="w-full text-center mt-20 sm:mt-28 md:mt-32">
-          <div className="bg-gradient-to-r from-seez-amber to-seez-amber-dark rounded-2xl p-8 sm:p-10 shadow-2xl max-w-6xl mx-auto">
+        <div className="ts-banner w-full text-center mt-20 sm:mt-28 md:mt-32">
+          <div className="bg-gradient-to-r from-seez-amber to-seez-amber-dark rounded-2xl p-8 sm:p-10 shadow-[0_0_50px_rgba(209,213,219,0.08)] max-w-6xl mx-auto transition-transform duration-500 hover:scale-[1.02]">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">
               Join Our Fragrance Journey
             </h2>

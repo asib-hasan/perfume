@@ -6,7 +6,7 @@ import Hero from "@/components/slices/Hero";
 import Carousel from "@/components/slices/Carousel";
 import TestimonialSlider from "@/components/slices/TestimonialSlider";
 import AffiliateForm from "@/components/slices/AffiliateForm";
-import Confetti from "@/components/effects/Confetti";
+import PerfumeMist from "@/components/effects/PerfumeMist";
 import FloatingButtons from "@/components/layout/FloatingButtons";
 
 const Scene = dynamic(() => import("@/components/3d/Scene"), {
@@ -18,8 +18,8 @@ export default function Home() {
 
   return (
     <>
-      {/* Confetti particles */}
-      <Confetti count={35} />
+      {/* Perfume Mist overlay */}
+      <PerfumeMist count={150} />
 
       {/* Floating WhatsApp + Cart */}
       <FloatingButtons />

@@ -14,12 +14,15 @@ export default function ProductModel({ productSlug }: ProductModelProps) {
   const meshRef = useRef<Mesh>(null);
 
   const colors: Record<string, string> = {
-    bold: "#d4a017",
-    dusk: "#b08512",
-    noir: "#1e1c1a",
+    bold: "#d1d5db",
+    dusk: "#9ca3af",
+    noir: "#4b5563",
+    ruby: "#9f1239",
+    sapphire: "#1e3a8a",
+    emerald: "#064e3b",
   };
 
-  const color = colors[productSlug] || "#d4a017";
+  const color = colors[productSlug] || "#d1d5db";
 
   useFrame((_, delta) => {
     if (meshRef.current) {
@@ -51,7 +54,7 @@ export default function ProductModel({ productSlug }: ProductModelProps) {
       <mesh position={[0, -0.95, 0]}>
         <torusGeometry args={[0.78, 0.05, 16, 32]} />
         <meshStandardMaterial
-          color="#d4af37"
+          color="#d1d5db"
           metalness={1}
           roughness={0.1}
         />

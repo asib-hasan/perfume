@@ -2,11 +2,11 @@
 
 /* ===== DESIGN TOKENS (Tailwind v4 @theme) ===== */
 @theme inline {
-  /* Colors — SEEZ brand: warm gold accents + deep black + warm neutrals */
-  --color-seez-amber: #d4a017;
-  --color-seez-amber-dark: #b08512;
-  --color-seez-amber-light: #e8b930;
-  --color-seez-gold: #c9952a;
+  /* Colors — SEEZ brand: Vibrant Sky Blue / Cyan for a modern, smart look */
+  --color-seez-amber: #0ea5e9; /* Sky Blue */
+  --color-seez-amber-dark: #0284c7; /* Deep Cyan */
+  --color-seez-amber-light: #38bdf8; /* Light Cyan */
+  --color-seez-gold: #8b5cf6; /* Violet accent */
   --color-seez-black: #080808;
   --color-seez-charcoal: #111111;
   --color-seez-dark: #161412;
@@ -48,8 +48,8 @@
 }
 
 @keyframes glow-breathe {
-  0%, 100% { filter: drop-shadow(0 0 8px rgba(212,160,23,0.2)); }
-  50% { filter: drop-shadow(0 0 20px rgba(212,160,23,0.5)); }
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(209, 213, 219, 0.2)); }
+  50% { filter: drop-shadow(0 0 20px rgba(209, 213, 219, 0.5)); }
 }
 
 @keyframes gradient-text-flow {
@@ -97,15 +97,15 @@ body {
 
 /* ===== CUSTOM UTILITIES ===== */
 
-/* SEEZ brand gradient text — amber/gold/white shimmer */
+/* SEEZ brand gradient text — cyan/blue shimmer */
 .seez-gradient-text {
   background: linear-gradient(
     135deg,
-    #f0ebe3 0%,
-    #e8b930 30%,
-    #d4a017 50%,
-    #e8b930 70%,
-    #f0ebe3 100%
+    #38bdf8 0%,
+    #0ea5e9 30%,
+    #0284c7 50%,
+    #0ea5e9 70%,
+    #38bdf8 100%
   );
   background-size: 300% auto;
   -webkit-background-clip: text;
@@ -119,9 +119,9 @@ body {
   background: linear-gradient(165deg, #080808 0%, #0f0d09 35%, #12100a 60%, #080808 100%);
 }
 
-/* Amber glow border */
+/* Cyan glow border */
 .amber-glow {
-  box-shadow: 0 0 20px rgba(212, 160, 23, 0.1), 0 0 60px rgba(212, 160, 23, 0.04);
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.2), 0 0 60px rgba(14, 165, 233, 0.08);
 }
 
 /* Animation delays */
@@ -140,31 +140,18 @@ body {
 /* Border width 3 for avatar */
 .border-3 { border-width: 3px; }
 
-/* ===== CONFETTI / SPARKLE PARTICLES ===== */
-@keyframes sparkle-fall-1 {
-  0% { transform: translate(0, -10vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 0.8; }
-  100% { transform: translate(60px, 110vh) rotate(360deg); opacity: 0; }
-}
-@keyframes sparkle-fall-2 {
-  0% { transform: translate(0, -10vh) rotate(45deg); opacity: 0; }
-  10% { opacity: 0.9; }
-  90% { opacity: 0.6; }
-  100% { transform: translate(-50px, 110vh) rotate(-270deg); opacity: 0; }
-}
-@keyframes sparkle-fall-3 {
-  0% { transform: translate(0, -10vh) rotate(90deg); opacity: 0; }
-  10% { opacity: 0.8; }
-  90% { opacity: 0.5; }
-  100% { transform: translate(35px, 110vh) rotate(450deg); opacity: 0; }
+/* ===== PERFUME MIST / SPRAY PARTICLES ===== */
+@keyframes perfume-spray-cloud {
+  0% { transform: translate(0, 0) scale(0.2); opacity: 0; filter: blur(0px); }
+  5% { opacity: 1; filter: blur(1px); }
+  20% { opacity: var(--max-opacity, 1); filter: blur(3px); }
+  100% { transform: translate(var(--spread-x), var(--end-y)) scale(var(--end-scale, 5)); opacity: 0; filter: blur(15px); }
 }
 
-.confetti-particle {
+.mist-particle {
   position: absolute;
-  width: 10px;
-  height: 10px;
   pointer-events: none;
+  border-radius: 50%;
 }
 
 /* ===== PRODUCT BOX SCROLL ANIMATION ===== */
