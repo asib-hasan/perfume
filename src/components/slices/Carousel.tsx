@@ -65,14 +65,43 @@ interface CarouselProps {
 
 export default function Carousel({ onProductChange }: CarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isChanging, setIsChanging] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const goTo = useCallback(
     (index: number) => {
+      if (isChanging) return;
+      setIsChanging(true);
+      
       const newIndex = ((index % products.length) + products.length) % products.length;
-      setActiveIndex(newIndex);
-      onProductChange?.(products[newIndex].slug);
+      
+      if (cardRef.current) {
+        // Spin the card out
+        gsap.to(cardRef.current, {
+          rotateY: 90,
+          scale: 0.8,
+          duration: 0.3,
+          ease: "power2.in",
+          onComplete: () => {
+            setActiveIndex(newIndex);
+            onProductChange?.(products[newIndex].slug);
+            
+            // Spin the card in with new content
+            gsap.fromTo(
+              cardRef.current,
+              { rotateY: -90, scale: 0.8 },
+              { rotateY: 0, scale: 1, duration: 0.4, ease: "back.out(1.5)" }
+            );
+            setIsChanging(false);
+          }
+        });
+      } else {
+        setActiveIndex(newIndex);
+        onProductChange?.(products[newIndex].slug);
+        setIsChanging(false);
+      }
     },
-    [onProductChange]
+    [onProductChange, isChanging]
   );
 
   const prev = () => goTo(activeIndex - 1);
@@ -114,8 +143,11 @@ export default function Carousel({ onProductChange }: CarouselProps) {
     >
       {/* Background overlay */}
       <div
-        className="pointer-events-none absolute inset-0 transition-colors duration-1000 ease-in-out"
-        style={{ background: `radial-gradient(circle at 50% 50%, ${product.color}25 0%, transparent 70%)` }}
+        className="pointer-events-none absolute inset-0 transition-all duration-1000 ease-in-out"
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${product.color}25 0%, transparent 70%)`,
+          opacity: isChanging ? 0.3 : 1
+        }}
       />
 
       {/* Wavy circles background */}
@@ -143,63 +175,61 @@ export default function Carousel({ onProductChange }: CarouselProps) {
       </h2>
 
       {/* Product viewer area */}
-      <div className="carousel-product-display flex items-center justify-center md:justify-center mt-4 sm:mt-6 md:mt-0 px-5 overflow-hidden">
-        <div className="grid grid-cols-[auto,auto,auto] items-center gap-0 sm:gap-4 md:gap-6">
-          {/* Prev button */}
-          <button
-            onClick={prev}
-            className="size-8 sm:size-10 rounded-full border-2 border-white/80 bg-white/5 p-2 opacity-85 ring-white focus:outline-none focus-visible:opacity-100 focus-visible:ring-4 md:size-12 lg:size-14 transition-all duration-300 hover:bg-white/20 hover:scale-110 hover:border-white"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 52 52">
-              <path
-                fill="currentColor"
-                d="M9 25.7c0 1.1.6 2.2 1.1 2.8l18.6 18.6a4.4 4.4 0 006.2 0 4.4 4.4 0 000-6.2L19.7 25.7 35 10.5a4.4 4.4 0 000-6.2 4.4 4.4 0 00-6.2 0l-18 18C9.6 23.4 9 24.6 9 25.7z"
-              />
-            </svg>
-            <span className="sr-only">Previous Perfume</span>
-          </button>
+      <div className="carousel-product-display relative flex items-center justify-center mt-4 sm:mt-6 md:mt-0 w-full max-w-3xl mx-auto px-4">
+        {/* Prev button */}
+        <button
+          onClick={prev}
+          className="absolute left-4 sm:left-6 z-20 size-10 sm:size-12 rounded-full border-2 border-white/80 bg-white/5 p-2 opacity-85 ring-white focus:outline-none focus-visible:opacity-100 focus-visible:ring-4 md:size-14 transition-all duration-300 hover:bg-white/20 hover:scale-110 hover:border-white flex items-center justify-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 52 52" className="w-full h-full">
+            <path
+              fill="currentColor"
+              d="M9 25.7c0 1.1.6 2.2 1.1 2.8l18.6 18.6a4.4 4.4 0 006.2 0 4.4 4.4 0 000-6.2L19.7 25.7 35 10.5a4.4 4.4 0 000-6.2 4.4 4.4 0 00-6.2 0l-18 18C9.6 23.4 9 24.6 9 25.7z"
+            />
+          </svg>
+          <span className="sr-only">Previous Perfume</span>
+        </button>
 
-          {/* Product display area */}
-          <div
-            className="group aspect-square h-[80vmin] sm:h-[68vmin] md:h-[55vmin] lg:h-[58vmin] min-h-40 max-h-[65vh] cursor-pointer flex items-center justify-center"
-            title={`Click to view ${product.name} details`}
-          >
-            {/* 3D model placeholder — the fixed canvas handles this on desktop */}
-            <div className="w-full h-full flex items-center justify-center">
-              <div
-                className="w-32 h-48 sm:w-40 sm:h-56 md:w-48 md:h-64 rounded-[2rem] shadow-2xl transition-all duration-700 ease-in-out transform group-hover:scale-105"
-                style={{
-                  background: `linear-gradient(135deg, ${product.color}dd, ${product.color}44)`,
-                  boxShadow: `0 20px 40px -10px ${product.color}40`,
-                  border: `1px solid ${product.color}66`
-                }}
-              >
-                <div className="w-full h-full flex items-center justify-center text-white/50 text-6xl font-display font-light">
-                  {product.name[0]}
-                </div>
+        {/* Product display area */}
+        <div
+          className="group aspect-square h-[65vmin] sm:h-[60vmin] md:h-[50vmin] lg:h-[55vmin] min-h-40 max-h-[55vh] cursor-pointer flex items-center justify-center"
+          title={`Click to view ${product.name} details`}
+        >
+          <div className="w-full h-full flex items-center justify-center" style={{ perspective: "1000px" }}>
+            <div
+              ref={cardRef}
+              className="w-32 h-48 sm:w-40 sm:h-56 md:w-48 md:h-64 rounded-[2rem] shadow-2xl transition-shadow duration-700 ease-in-out"
+              style={{
+                background: `linear-gradient(135deg, ${product.color}dd, ${product.color}44)`,
+                boxShadow: `0 20px 40px -10px ${product.color}40`,
+                border: `1px solid ${product.color}66`
+              }}
+            >
+              <div className="w-full h-full flex items-center justify-center text-white/50 text-6xl font-display font-light">
+                {product.name[0]}
               </div>
             </div>
           </div>
-
-          {/* Next button */}
-          <button
-            onClick={next}
-            className="size-8 sm:size-10 rounded-full border-2 border-white/80 bg-white/5 p-2 opacity-85 ring-white focus:outline-none focus-visible:opacity-100 focus-visible:ring-4 md:size-12 lg:size-14 transition-all duration-300 hover:bg-white/20 hover:scale-110 hover:border-white"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 52 52"
-              className="-scale-x-100"
-            >
-              <path
-                fill="currentColor"
-                d="M9 25.7c0 1.1.6 2.2 1.1 2.8l18.6 18.6a4.4 4.4 0 006.2 0 4.4 4.4 0 000-6.2L19.7 25.7 35 10.5a4.4 4.4 0 000-6.2 4.4 4.4 0 00-6.2 0l-18 18C9.6 23.4 9 24.6 9 25.7z"
-              />
-            </svg>
-            <span className="sr-only">Next Perfume</span>
-          </button>
         </div>
+
+        {/* Next button */}
+        <button
+          onClick={next}
+          className="absolute right-4 sm:right-6 z-20 size-10 sm:size-12 rounded-full border-2 border-white/80 bg-white/5 p-2 opacity-85 ring-white focus:outline-none focus-visible:opacity-100 focus-visible:ring-4 md:size-14 transition-all duration-300 hover:bg-white/20 hover:scale-110 hover:border-white flex items-center justify-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 52 52"
+            className="-scale-x-100 w-full h-full"
+          >
+            <path
+              fill="currentColor"
+              d="M9 25.7c0 1.1.6 2.2 1.1 2.8l18.6 18.6a4.4 4.4 0 006.2 0 4.4 4.4 0 000-6.2L19.7 25.7 35 10.5a4.4 4.4 0 000-6.2 4.4 4.4 0 00-6.2 0l-18 18C9.6 23.4 9 24.6 9 25.7z"
+            />
+          </svg>
+          <span className="sr-only">Next Perfume</span>
+        </button>
       </div>
 
       {/* Product info */}
@@ -210,7 +240,7 @@ export default function Carousel({ onProductChange }: CarouselProps) {
 
         {/* Price */}
         <div className="mt-1 sm:mt-2 md:mt-2">
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-2 transition-opacity duration-300" style={{ opacity: isChanging ? 0 : 1 }}>
             <span className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
               ৳ {product.price.toLocaleString()}
             </span>

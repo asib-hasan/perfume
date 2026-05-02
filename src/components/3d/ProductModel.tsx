@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Mesh } from "three";
+import { Mesh, Group } from "three";
+import gsap from "gsap";
 
 interface ProductModelProps {
   productSlug: string;
@@ -23,6 +24,18 @@ export default function ProductModel({ productSlug }: ProductModelProps) {
   };
 
   const color = colors[productSlug] || "#d1d5db";
+  const groupRef = useRef<Group>(null);
+
+  // Trigger a fast 3D spin when the product changes
+  useEffect(() => {
+    if (groupRef.current) {
+      gsap.to(groupRef.current.rotation, {
+        y: groupRef.current.rotation.y + Math.PI * 2,
+        duration: 0.8,
+        ease: "power3.inOut",
+      });
+    }
+  }, [productSlug]);
 
   useFrame((_, delta) => {
     if (meshRef.current) {
@@ -31,7 +44,7 @@ export default function ProductModel({ productSlug }: ProductModelProps) {
   });
 
   return (
-    <group position={[0, -0.5, 0]}>
+    <group ref={groupRef} position={[0, -0.5, 0]}>
       {/* Main body */}
       <mesh ref={meshRef} position={[0, 0, 0]}>
         <cylinderGeometry args={[0.8, 0.8, 1.8, 32]} />
